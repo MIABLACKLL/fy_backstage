@@ -1,0 +1,7 @@
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 10, 2019 - 12:44:29
+Django version 2.1.7, using settings 'fy_dbms.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
