@@ -167,17 +167,70 @@
                                     </thead>
                                     <tbody id="users">
 
-                                    <!-- more data -->
+                                    {% for item in user_list%}
+                                    <tr>
+                                        <th>{{item.user_id}}              </th>
+                                        <th>{{item.name   }}              </th>
+                                        <th>{{item.phone  }}              </th>
+                                        <th>{{item.vip=="\u0001"?"是":"否"}}</th>
+
+                                    </tr>
+                                    {% endfor %}
                                     </tbody>
                                 </table>
-                            </div>
-                            <div class="am-u-lg-12 am-cf">
+                            </div>\
+                            <div class="am-u-lg-12 am-cf ">
 
-                                <div class="am-fr">
-                                    <ul class="am-pagination tpl-pagination" id="page">
 
-                                    </ul>
-                                </div>
+                                {% for item in user_list%}
+
+                                <ul data-am-widget="pagination"
+                                    class="am-pagination am-pagination-default"
+                                >
+
+                                    <li class="am-pagination-first ">
+                                        <a href="/?page=1" class="">第一页</a>
+                                    </li>
+                                    {% if video_list.has_previous %}
+
+                                    <li class="am-pagination-prev ">
+                                        <a href="/?page={{ user_list.next_page_number }}" class="">上一页</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="am-pagination-prev am-disabled">
+                                        <a href="#" class="">上一页</a>
+                                    </li>
+                                    {% endif %}
+
+
+                                    {% for num in paginator.page_range %}
+                                    {% if num == currentPage %}
+                                    <li class="am-active">
+                                        <a href="/?page={{ num }}" class="am-active">{{num}}</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="">
+                                        <a href="?page={{ num }}" class="">{{num}}</a>
+                                    </li>
+
+                                    {% endif %}
+                                    {% endfor %}
+
+
+                                    {% if video_list.has_next %}
+                                    <li class="am-pagination-next ">
+                                        <a href="/?page={{ user_list.next_page_number }}" class="">下一页</a>
+                                    </li>
+
+                                    {% else %}
+                                    <li class="am-pagination-next am-disabled">
+                                        <a href="#" class="">下一页</a>
+                                    </li>
+
+                                    {% endif %}
+
+                                </ul>
+
                             </div>
                         </div>
                     </div>
