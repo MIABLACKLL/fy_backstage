@@ -36,9 +36,9 @@ function getParams(key) {
 
 function initializeinfo(){
   //console.log(getParams("name"));
-  $('#name').attr("value",getParams("name"));
+  $('#name').html(getParams("name"));
   $('#email').attr("value",getParams("email"));
-  $('#phone').attr("value",getParams("phone"));
+  $('#phone').html(getParams("phone"));
   $('#block').attr("value",getParams("status"));
   //console.log(getParams("email"));
 }
