@@ -60,6 +60,12 @@ function postTemplate(data) {
       $('<td>').append(item.phone),
       $('<td>').append(item.status), 
       $('<td>').append(item.last_time),
+      $('<td>').append($('<button>')//<a class="am-btn am-btn-link">链接</a>
+        .attr('class','am-btn am-btn-primary am-btn-xs')//
+        .attr('id',item.staff_id)
+        .attr('onclick','modifystaff('+JSON.stringify(item)+')')
+        .append("修改")
+      ),
       $('<td>').append($('<input>')
         //.attr('class','am-checkbox')
         .attr('type','checkbox')
@@ -293,13 +299,20 @@ addconvention(){
   })  
 }
 
-
-
-
 //单个增加技术员
 function
 addstaff(){
 //跳转到technician-add.html
 //如果需要注释掉就注释掉
 window.location.href = '/index/technician-list/technician-add';
+}
+
+//修改技术员信息
+function
+modifystaff(item){
+  //var item=JSON.parse(itemstring);
+  console.log(item.staff_id);
+  window.location.href='./technician-modify.html?staff_id='+item.staff_id+'&name='+item.name+'&email='+item.email+'&phone='+item.phone+'&status='+item.status;
+  //"name":"石静","email":"123456@qq.com","phone":"123456","status":"0","last_time":"1234"
+  //跳转界面过程中传递了参数
 }
