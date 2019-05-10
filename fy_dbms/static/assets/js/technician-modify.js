@@ -53,7 +53,7 @@ function modifyTechnician() {
 
 
   $.ajax({
-    url: '',//http://localhost:8080/category
+    url: '',//http://localhost:8080/category  //这里的url没写！！
     dataType: 'json',
     async: true,
     type: 'POST',
