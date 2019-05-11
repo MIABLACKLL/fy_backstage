@@ -200,7 +200,7 @@
                                     {% endif %}
 
 
-                                    {% for num in paginator.page_range %}
+                                    {% for num in page_range %}
                                     {% if num == currentPage %}
                                     <li class="am-active">
                                         <a href="./?page={{ num }}" class="am-active">{{num}}</a>
