@@ -15,10 +15,9 @@ Including another URLconf
 """
 from django.urls import path,re_path
 from fy_dbms_repair import views
-
 urlpatterns = [
     path(r'login/', views.adminLogin),
-    path(r'user/page/',views.getAllUser),
+    #path(r'user/page/',views.getAllUser),
     path(r'staff/addconvention',views.renderConvention),
     path(r'index/user-list/',views.renderUserList),
     path(r'index/technician-list/',views.renderRapirList),
@@ -29,8 +28,11 @@ urlpatterns = [
     path(r'staff/nickname',views.selectStaff),
     path(r'staff/delete',views.deleteStaff),
     path(r'staff/addSingle',views.addSingleStaff),
-    re_path(r'^user/nickname$',views.selectAppUser)
+    path(r'staff/update', views.updateStaff),
+    re_path(r'^user/nickname$',views.selectAppUser),
+    re_path(r'^index/technician-list/technician-modify$',views.renderStaffUpate)
 
 
 ]
-handler404="fy_dbms.views.pageNotFound"
+handler404=views.pageNotFound
+handler500=views.pageNotFound
