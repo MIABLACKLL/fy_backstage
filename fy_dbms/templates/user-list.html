@@ -145,11 +145,14 @@
 
                             <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
                                 <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
-                                    <input id="input_nickname" type="text" placeholder="搜索用户" class="am-form-field ">
-                                    <span class="am-input-group-btn">
-                                            <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search"
-                                                    type="button" onclick="search()"></button>
-                                        </span>
+                                    <form method="get">
+                                        <div class="a" style="display:flex">
+                                            <input id="input_nickname" type="text" name="nickname" placeholder="搜索用户姓名或电话"  value="{{ request.GET.nickname }}" class="am-form-field ">
+                                            <span class="am-input-group-btn">
+                                                    <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="submit"></button>
+                                                </span>
+                                        </div>
+                                    </form>
 
                                 </div>
                             </div>

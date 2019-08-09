@@ -64,18 +64,6 @@ logout() {
 function
 search() {
   var nickname =encodeURI($('#input_nickname').val()) ;
-  $.ajax({
-    url: 'http://127.0.0.1:8000/user/nickname?nickname=' + nickname,
-    type: 'get',
-    async: true,
-    dataType: 'json',
-    success: function(result) {
-      usersTemplate(result);
-
-    },
-    error: function(xhr) {
-      alert(xhr);
-    }
-  })
+  return nickname
 }
 

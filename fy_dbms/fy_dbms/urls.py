@@ -24,15 +24,16 @@ urlpatterns = [
     path(r'index/',views.renderIndex),
     path(r'index/technician-list/technician-add',views.renderStaffAdd),
     path(r'staff/addMultiple',views.addMultipleStaff),
-    path(r'staff/list/',views.getAllStaff),
-    path(r'staff/nickname',views.selectStaff),
+    # path(r'staff/list/',views.getAllStaff),
+    # path(r'staff/nickname',views.selectStaff),
     path(r'staff/delete',views.deleteStaff),
     path(r'staff/addSingle',views.addSingleStaff),
     path(r'staff/update', views.updateStaff),
-    re_path(r'^user/nickname$',views.selectAppUser),
-    re_path(r'^index/technician-list/technician-modify$',views.renderStaffUpate)
-
-
+    path(r'system/update',views.updateSystemStatus),
+    path(r'system/init',views.initSystemStatus),
+    re_path(r'^index/user-list/$',views.renderUserList),
+    re_path(r'^index/technician-list/technician-modify$', views.renderStaffUpate),
+    re_path(r'^index/technician-list/$', views.renderRapirList)
 ]
 handler404=views.pageNotFound
 handler500=views.pageNotFound

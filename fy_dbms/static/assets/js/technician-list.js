@@ -1,7 +1,7 @@
 var curPage = 1;
 window.onload =
   function () {
-    refreshPage(curPage);
+    //refreshPage(curPage);
     adminTemplate();
   }
 
@@ -72,7 +72,7 @@ function postTemplate(data) {
         .attr('class','am-checkbox am-hide')
         .attr('id',item.staff_id+'check')
         .attr('data-am-ucheck','')
-      ),
+      )
       //$('<td>').append($('<input>')
        // .attr('type','radio')
         //.attr('class','am-radio')//
@@ -90,7 +90,7 @@ function postTemplate(data) {
     $(id).change(function () {
       console.log(item.id);
       console.log($(id).val());
-      changeStatus(item.id, $(id).val());
+      //changeStatus(item.id, $(id).val());
     })
   })
   // onchange函数
@@ -247,10 +247,12 @@ addconvention(){
   //如果被选中，那么checked=true  .attr('checked')
   //遍历整个表格，如果复选框被选中，那么将这一行的id也就是staff_id传回
   var mytable = document.getElementById("technicians");
+  console.log(mytable)
   var data=[];
   var rows=0;
    for(var i=0,rows=mytable.rows.length; i<rows; i++){
          // data[i] ="";
+          console.log($('#'+mytable.rows[i].cells[0].innerHTML+'check'))
           if($('#'+mytable.rows[i].cells[0].innerHTML+'check').is(':checked')){
             //如果这一行的复选框被选中，那么记录下这一行的id
             data[i] =mytable.rows[i].cells[0].innerHTML;
@@ -290,7 +292,7 @@ addconvention(){
     async: true,
     data: jsonstring,
     success: function (data) {
-      console.log(data);
+      alert(data);
       console.log("传递删除id成功");
     },
     error: function (xhr) {
@@ -309,10 +311,10 @@ window.location.href = '/index/technician-list/technician-add';
 
 //修改技术员信息
 function
-modifystaff(item){
-  //var item=JSON.parse(itemstring);
-  console.log(item.staff_id);
-  window.location.href='./technician-modify.html?staff_id='+item.staff_id+'&name='+item.name+'&email='+item.email+'&phone='+item.phone+'&status='+item.status;
+modifystaff(staff_id,name,email,phone,status){
+  //item=JSON.stringify(item);
+  console.log(name);
+  window.location.href='/index/technician-list/technician-modify?staff_id='+staff_id+'&name='+name+'&email='+email+'&phone='+phone+'&status='+status;
   //"name":"石静","email":"123456@qq.com","phone":"123456","status":"0","last_time":"1234"
   //跳转界面过程中传递了参数
 }

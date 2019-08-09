@@ -1,5 +1,6 @@
 window.onload =
     function() {
+  initializeinfo();
   userTemplate();
   //ajaxStatus();
 }
@@ -44,4 +45,57 @@ function
 logout() {
   sessionStorage.isLogin = false;
   window.location.href = '/login';
+}
+
+function getStatus(status) {
+  if(status===0)
+    return "全局关闭";
+  else if(status===1)
+    return "仅会员报修";
+  else if(status===2)
+    return "全局开启";
+  else
+    return "未知状态，请重试或联系管理员";
+}
+
+function initializeinfo(){
+    $.ajax({
+    url: 'http://127.0.0.1:8000/system/init',//http://localhost:8080/category  //这里的url没写！！
+    dataType: 'json',
+    async: true,
+    type: 'POST',
+    data: JSON.stringify({'status':status}),
+    success: function(result) {
+      console.log(result.status)
+      $('#status').attr("value",getStatus(result.status));
+    },
+    error: function(xhr) {
+      // document.getElementById("block")[1].selected=true;
+      console.log(xhr.status)
+    }
+
+  })
+}
+
+
+function
+modifyststem(){
+  var status=$('select').val();
+  console.log(status);
+  //status.attr('selected');
+  $.ajax({
+    url: 'http://127.0.0.1:8000/system/update',//http://localhost:8080/category  //这里的url没写！！
+    dataType: 'json',
+    async: true,
+    type: 'POST',
+    data: JSON.stringify({'status':status}),//
+    success: function(result) {
+      alert(result);
+      window.location.href = '/index';
+    },
+    error: function(xhr) {
+      console.log(xhr.status);
+    }
+  })
+  window.location.href = '/index';
 }

@@ -1,10 +1,11 @@
-from django.contrib import auth
+﻿from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse,Http404
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from fy_dbms_repair import models
+from django.db.models import Q,Count
 from django.core import serializers
 import urllib
 import json
@@ -16,9 +17,7 @@ def pageNotFound(request,**kwargs):
 @login_required
 def renderIndex(request):
     return render(request,'index.html')
-@login_required
-def renderRapirList(request):
-    return render(request,'technician-list.html')
+
 @login_required
 def renderConvention(request):
     return render(request,'addconvention.html')
@@ -48,31 +47,50 @@ def adminLogin(request):
 @csrf_exempt
 @login_required
 def renderUserList(request):
-    user_db_list=models.FyUserextend.objects.all()
-    user_temp_list=[]
-    for user in user_db_list:
-        vip_str='是' if user.vip=='\x01' else '否'
-        user_temp_list.append({'user_id':user.user_id,'name':user.name,'phone':user.phone,'vip':vip_str})
-    paginator=Paginator(user_temp_list,1)
-    # 获取当前的页码数，默认为1
-    page = request.GET.get("page", 1)
-    # 把当前的页码数转换为整数类型
-    currentPage = int(page)
-    # 设定显示范围
-    page_range = list(range(max(currentPage - 1, 1), currentPage)) + \
-                 list(range(currentPage, min(currentPage + 1, paginator.num_pages) + 1))
-    try:
-        user_list = paginator.page(page)  # 获取当前页码的记录
-    except PageNotAnInteger:
-        user_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
-    except EmptyPage:
-        user_list = paginator.page(paginator.num_pages)  # 如果用户输入的页码不是整数时,显示第1页的内容
-    return render(request,'user-list.html',locals())
+    if request.method == 'GET':
+        user_msg = request.GET.get('nickname', '')
+        if user_msg != '':
+            user_msg = urllib.parse.unquote(user_msg)
+            user_queryset = models.FyUserextend.objects.filter(Q(name=user_msg) | Q(phone=user_msg))
+            user_queryset = serializers.serialize("json", user_queryset)
+            user_queryset = json.loads(user_queryset)
+            user_db_list = []
+            for user in user_queryset:
+                user_db_list.append(user['fields'])
+        else:
+            user_db_list = models.FyUserextend.objects.all()
+        user_temp_list=[]
+        for user in user_db_list:
+            try:
+                vip_str='是' if user.vip == '\x01' else '否'
+                user_temp_list.append({'user_id': user.user_id, 'name': user.name, 'phone': user.phone, 'vip': vip_str})
+            except:
+                vip_str = '是' if user['vip'] == '\x01' else '否'
+                user_temp_list.append({'user_id': user['user_id'], 'name': user['name'], 'phone': user['phone'], 'vip': vip_str})
+
+
+        paginator=Paginator(user_temp_list, 50)
+        # 获取当前的页码数，默认为1
+        page = request.GET.get("page", 1)
+        # 把当前的页码数转换为整数类型
+        currentPage = int(page)
+        # 设定显示范围
+        page_range = list(range(max(currentPage - 5, 1), currentPage)) + \
+                     list(range(currentPage, min(currentPage + 5, paginator.num_pages) + 1))
+        try:
+            user_list = paginator.page(page)  # 获取当前页码的记录
+        except PageNotAnInteger:
+            user_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+        except EmptyPage:
+            user_list = paginator.page(paginator.num_pages)  # 如果用户输入的页码不是整数时,显示第1页的内容
+        return render(request,'user-list.html',locals())
 
 '''
 def adminLogout(request):
     auth.logout(request)
     return HttpResponseRedirect('/login')
+    
+    
 @login_required
 @csrf_exempt
 def getAllUser(request):
@@ -87,24 +105,61 @@ def getAllUser(request):
 
 @login_required
 @csrf_exempt
-def getAllStaff(request):
-    if request.method=='POST':
-        staff_list = models.FyStaff.objects.all().values('user_id','staff_id','email','status','last_time')
-        staff_msg_list = []
-        for staff in staff_list:
-            try:
-                staff_msg = models.FyUserextend.objects.get(user_id=staff['user_id'])
-            except models.FyUserextend.DoesNotExist:
-                continue
-            staff_dict = {'staff_id': staff['staff_id'], 'name': staff_msg.name, 'phone': staff_msg.phone,
-                         'email': staff['email'],'status':staff['status'],'last_time':time.asctime(time.localtime(staff['last_time']))}
-            staff_msg_list.append(staff_dict)
-        return HttpResponse(json.dumps(staff_msg_list,ensure_ascii=False), content_type="application/json.charset=utf-8")
-    else:
-        return render(request, 'technician-list.html')
+def renderRapirList(request):
+    if request.method == 'GET':
+        staff_msg = request.GET.get('nickname', '')
+        if staff_msg != '':
+            staff_list = models.FyUserextend.objects.filter(Q(name=staff_msg) | Q(phone=staff_msg))
+            staff_msg_list = []
+            for staff in staff_list:
+                try:
+                    staff_msg = models.FyStaff.objects.get(user_id=staff.user_id)
+                except models.FyStaff.DoesNotExist:
+                    continue
+                try:
+                    staff_order_count = models.FyOrder.objects.filter(staff_id=staff_msg.staff_id).count()
+                except:
+                    staff_order_count = 0
+                staff_dict = {'staff_id': staff_msg.staff_id, 'name': staff.name, 'phone': staff.phone,
+                              'email': staff_msg.email,'order_count':staff_order_count,'status': staff_msg.status,
+                              'last_time': time.asctime(time.localtime(staff_msg.last_time))}
+                staff_msg_list.append(staff_dict)
+        else:
+            staff_list = models.FyStaff.objects.all().values('user_id','staff_id','email','status','last_time')
+            staff_msg_list = []
+            for staff in staff_list:
+                try:
+                    staff_msg = models.FyUserextend.objects.get(user_id=staff['user_id'])
+                except models.FyUserextend.DoesNotExist:
+                    continue
+                try:
+                    staff_order_count = models.FyOrder.objects.filter(staff_id=staff['staff_id']).count()
+                except:
+                    staff_order_count = 0
+                staff_dict = {'staff_id': staff['staff_id'], 'name': staff_msg.name, 'phone': staff_msg.phone,
+                              'email': staff['email'],'order_count':staff_order_count,'status':staff['status'],
+                              'last_time':time.asctime(time.localtime(staff['last_time']))}
+                staff_msg_list.append(staff_dict)
+        staff_msg_list.reverse()
+        paginator=Paginator(staff_msg_list, 50)
+        # 获取当前的页码数，默认为1
+        page = request.GET.get("page", 1)
+        # 把当前的页码数转换为整数类型
+        currentPage = int(page)
+        # 设定显示范围
+        page_range = list(range(max(currentPage - 5, 1), currentPage)) + \
+                     list(range(currentPage, min(currentPage + 5, paginator.num_pages) + 1))
+        try:
+            staff_list = paginator.page(page)  # 获取当前页码的记录
+        except PageNotAnInteger:
+            staff_list = paginator.page(1)  # 如果用户输入的页码不是整数时,显示第1页的内容
+        except EmptyPage:
+            staff_list = paginator.page(paginator.num_pages)  # 如果用户输入的页码不是整数时,显示第1页的内容
+        return render(request,'technician-list.html',locals())
 
 
 
+'''
 @login_required
 @csrf_exempt
 def selectAppUser(request):
@@ -122,6 +177,7 @@ def selectAppUser(request):
             return HttpResponse(json.dumps("Can not be posted!", ensure_ascii=False)
                                 ,content_type="application/json.charset=utf-8")
 
+'''
 
 @login_required
 @csrf_exempt
@@ -183,6 +239,10 @@ def addMultipleStaff(request):
         staff_msg_json=json.loads(request.body)
         invalid_name={}
         for staff_msg in staff_msg_json:
+            if staff_msg['status']==0 or staff_msg['status']==1: pass
+            else:
+                return HttpResponse(json.dumps("技术员状态码输入有误！请参考批量添加公约", ensure_ascii=False),
+                                    content_type="application/json.charset=utf-8")
             try:
                 user_msg = models.FyUserextend.objects.get(name=staff_msg['name'], phone=staff_msg['phone'])
             except KeyError:
@@ -204,7 +264,7 @@ def addMultipleStaff(request):
                 return HttpResponse(json.dumps("发生未知错误，请稍后重试或联系管理员！", ensure_ascii=False),
                                     content_type="application/json.charset=utf-8")
         if invalid_name:
-            return HttpResponse(json.dumps(str(invalid_name)+"用户未在小程序中注册", ensure_ascii=False),
+            return HttpResponse(json.dumps(str(invalid_name)+"用户未在小程序中注册，其余技术员添加成功！", ensure_ascii=False),
                                 content_type="application/json.charset=utf-8")
         else:
             return HttpResponse(json.dumps("导入成功！", ensure_ascii=False),
@@ -260,4 +320,31 @@ def updateStaff(request):
                                 content_type="application/json.charset=utf-8")
     if request.method=='GET':
         return HttpResponse(json.dumps("Only can be posted!", ensure_ascii=False),
+                            content_type="application/json.charset=utf-8")
+
+
+@login_required
+@csrf_exempt
+def updateSystemStatus(request):
+    if request.method == 'POST':
+        response = {'0':"报修系统已全局关闭！",'1':"报修系统已设为仅会员报修！",'2':"报修系统已全局开启"}
+        switch = json.loads(request.body)
+        if switch['status'] == '0' or switch['status'] == '1' or switch['status'] == '2':
+            models.FyConfig.objects.filter(id=5).update(value=switch['status'])
+            return HttpResponse(json.dumps(response[switch['status']], ensure_ascii=False),
+                                content_type="application/json.charset=utf-8")
+        else:
+            return HttpResponse(json.dumps("error post!"+str(switch), ensure_ascii=False),
+                                content_type="application/json.charset=utf-8")
+
+@login_required
+@csrf_exempt
+def initSystemStatus(request):
+    if request.method == 'POST':
+        config = models.FyConfig.objects.get(id=5)
+        try:
+            status = {'status': int(config.value)}
+        except:
+            status = {'status': 0}
+        return HttpResponse(json.dumps(status, ensure_ascii=False),
                             content_type="application/json.charset=utf-8")

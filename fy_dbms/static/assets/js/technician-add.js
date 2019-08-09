@@ -39,7 +39,7 @@ addTechnician() {
     }
   })
 
-  window.location.href = '/index/technician-list/technician-add';
+  //window.location.href = '/index/technician-list/technician-add';
 }
 /*
 function

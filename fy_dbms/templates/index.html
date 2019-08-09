@@ -139,7 +139,6 @@
 
         <!-- 内容区域 -->
         <div class="tpl-content-wrapper">
-
             <div class="container-fluid am-cf">
                 <div class="row">
                     <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
@@ -148,15 +147,57 @@
                             <small>SCUFY 报修后台</small>
                         </div>
                     </div>
-                    <!-- <div class="am-u-lg-3 tpl-index-settings-button">
-                        <button type="button" class="page-header-button">
-                            <span class="am-icon-paint-brush"></span> 设置</button>
-                    </div> -->
                 </div>
-
             </div>
 
+
+
+          <div class="row-content am-cf">
+            <div class="row">
+              <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                <div class="widget am-cf">
+                  <div class="widget-head am-cf">
+                    <div class="widget-title am-fl">报修系统控制</div>
+                    <div class="widget-function am-fr">
+                      <a href="javascript:;" class="am-icon-cog"></a>
+                    </div>
+                  </div>
+                  <div class="widget-body am-fr">
+                    <form class="am-form tpl-form-line-form">
+                        <div class="am-form-group">
+                            <label for="status" class="am-u-sm-3 am-form-label">报修系统当前状态
+                              <span class="tpl-form-line-small-title">status</span>
+                            </label>
+                            <div class="am-u-sm-9">
+                              <input id="status" type="text" class="tpl-form-input" placeholder="" readonly>
+                            </div>
+                        </div>
+                      <div class="am-form-group">
+                        <label for="block" class="am-u-sm-3 am-form-label">报修系统全局开关
+                            <span class="tpl-form-line-small-title">switch</span>
+                        </label>
+                        <div class="am-u-sm-9">
+                          <select id="block" data-am-selected style="display: none;" >
+                              <option value="0">0-全部关闭</option>
+                              <option value="1">1-仅会员</option>
+                              <option value="2">2-全部开启</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="am-form-group">
+                        <div class="am-u-sm-9 am-u-sm-push-3">
+                          <button type="button" class="am-btn am-btn-primary tpl-btn-bg-color-success" onclick="modifyststem()">提交</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+
 
             <!-- Row end -->
     </div>

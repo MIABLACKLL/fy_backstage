@@ -26,7 +26,7 @@ DEBUG = True
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_AGE=60*30
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fy_dbms_repair'
+    'fy_dbms_repair',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +79,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'fyscu_repair',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': 3307,
         'USER': 'root',
         'PASSWORD': '990531',

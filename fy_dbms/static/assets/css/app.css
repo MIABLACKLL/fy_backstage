@@ -341,9 +341,9 @@ ul.tpl-dropdown-content .tpl-dropdown-menu-messages-item .menu-messages-content 
 }
 
 .tpl-user-panel-profile-picture {
-  border-radius: 50%;
-  width: 82px;
-  height: 82px;
+  border-radius: 70%;
+  width: 100px;
+  height: 100px;
   margin-bottom: 10px;
   overflow: hidden;
 }

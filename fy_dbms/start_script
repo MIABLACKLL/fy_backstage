@@ -1,0 +1,17 @@
+#sed -i '/user/{s/nginx/root/}' /etc/nginx/nginx.conf
+#将项目nginx配置连接到nginx配置
+mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+ln -s /home/docker/FY-BXHT/fy_dbms/nginx.conf /etc/nginx/nginx.conf
+systemctl restart nginx
+cd /home/docker/FY-BXHT/fy_dbms
+#刷新数据库
+./manage.py migrate --noinput
+#加载管理员用户到数据库，以便容器启动之后不必再进入容器执行python manage.py createsuperuser操作
+./manage.py loaddata ./fixtures/superuser.json
+#收集静态文件
+./manage.py collectstatic --noinput
+
+#返回上级目录，mysite_uwsgi.ini所在的目录
+cd ..
+#启动uwsgi
+uwsgi --ini django_uwsgi.ini
